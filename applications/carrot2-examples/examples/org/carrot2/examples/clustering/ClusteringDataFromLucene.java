@@ -2,7 +2,7 @@
 /*
  * Carrot2 project.
  *
- * Copyright (C) 2002-2015, Dawid Weiss, Stanisław Osiński.
+ * Copyright (C) 2002-2016, Dawid Weiss, Stanisław Osiński.
  * All rights reserved.
  *
  * Refer to the full license file "carrot2.LICENSE"
@@ -32,7 +32,7 @@ import org.carrot2.source.lucene.LuceneDocumentSource;
 import org.carrot2.source.lucene.LuceneDocumentSourceDescriptor;
 import org.carrot2.source.lucene.SimpleFieldMapperDescriptor;
 
-import com.google.common.collect.Maps;
+import org.carrot2.shaded.guava.common.collect.Maps;
 
 /**
  * This example shows how to cluster {@link Document}s retrieved from a Lucene index using

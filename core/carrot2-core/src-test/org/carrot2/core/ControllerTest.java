@@ -2,7 +2,7 @@
 /*
  * Carrot2 project.
  *
- * Copyright (C) 2002-2015, Dawid Weiss, Stanisław Osiński.
+ * Copyright (C) 2002-2016, Dawid Weiss, Stanisław Osiński.
  * All rights reserved.
  *
  * Refer to the full license file "carrot2.LICENSE"
@@ -20,7 +20,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 import com.carrotsearch.randomizedtesting.annotations.ThreadLeakLingering;
-import com.google.common.collect.ImmutableMap;
+import org.carrot2.shaded.guava.common.collect.ImmutableMap;
 
 /**
  * Runs matrix tests on {@link Controller} in all realistic configurations.

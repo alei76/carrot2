@@ -2,7 +2,7 @@
 /*
  * Carrot2 project.
  *
- * Copyright (C) 2002-2015, Dawid Weiss, Stanisław Osiński.
+ * Copyright (C) 2002-2016, Dawid Weiss, Stanisław Osiński.
  * All rights reserved.
  *
  * Refer to the full license file "carrot2.LICENSE"
@@ -59,7 +59,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.carrotsearch.hppc.IntStack;
-import com.google.common.collect.Lists;
+import org.carrot2.shaded.guava.common.collect.Lists;
 
 public abstract class AbstractBrowserVisualizationViewPage extends Page
 {
@@ -267,7 +267,7 @@ public abstract class AbstractBrowserVisualizationViewPage extends Page
             @SuppressWarnings("unchecked")
             final List<Cluster> selected = (List<Cluster>) sel.toList();
 
-            IntStack ids = IntStack.newInstanceWithCapacity(selected.size());
+            IntStack ids = new IntStack(selected.size());
             for (Cluster cluster : selected)
             {
                 ids.push(cluster.getId());

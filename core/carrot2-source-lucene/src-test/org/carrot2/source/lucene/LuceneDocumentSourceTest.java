@@ -2,7 +2,7 @@
 /*
  * Carrot2 project.
  *
- * Copyright (C) 2002-2015, Dawid Weiss, Stanisław Osiński.
+ * Copyright (C) 2002-2016, Dawid Weiss, Stanisław Osiński.
  * All rights reserved.
  *
  * Refer to the full license file "carrot2.LICENSE"
@@ -134,10 +134,10 @@ public class LuceneDocumentSourceTest extends
     @Test
     public void testCustomQuery() throws Exception
     {
-        final BooleanQuery query = new BooleanQuery();
-        query.add(new TermQuery(new Term("snippet", "data")), Occur.MUST);
+        final BooleanQuery.Builder builder = new BooleanQuery.Builder();
+        builder.add(new TermQuery(new Term("snippet", "data")), Occur.MUST);
 
-        this.processingAttributes.put(AttributeNames.QUERY, query);
+        this.processingAttributes.put(AttributeNames.QUERY, builder.build());
 
         assertThat(runQuery(null, getLargeQuerySize())).as("Number of results")
             .isGreaterThan(10);
@@ -221,7 +221,7 @@ public class LuceneDocumentSourceTest extends
             .isEqualTo(results);
         for (Document document : getDocuments())
         {
-            assertThat(document.getField(LuceneDocumentSource.LUCENE_DOCUMENT_FIELD))
+            assertThat((Object) document.getField(LuceneDocumentSource.LUCENE_DOCUMENT_FIELD))
                 .isInstanceOf(org.apache.lucene.document.Document.class);
         }
     }

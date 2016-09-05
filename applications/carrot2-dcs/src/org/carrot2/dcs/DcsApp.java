@@ -2,7 +2,7 @@
 /*
  * Carrot2 project.
  *
- * Copyright (C) 2002-2015, Dawid Weiss, Stanisław Osiński.
+ * Copyright (C) 2002-2016, Dawid Weiss, Stanisław Osiński.
  * All rights reserved.
  *
  * Refer to the full license file "carrot2.LICENSE"
@@ -13,6 +13,7 @@
 package org.carrot2.dcs;
 
 import java.net.URL;
+import java.util.Locale;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
@@ -31,11 +32,6 @@ import org.slf4j.Logger;
 public class DcsApp
 {
     /**
-     * Is this the absolute minimum required for Jetty to run? 
-     */
-    private final static int MIN_THREADS = 10;
-
-    /**
      * DCS logger. Tests attach to this logger's LOG4J appender.
      */
     final Logger log = org.slf4j.LoggerFactory.getLogger("dcs");
@@ -49,14 +45,13 @@ public class DcsApp
     }, required = false, usage = "Print detailed messages.")
     boolean verbose;
 
-    @Option(name = "--accept-queue", required = false, 
-        usage = "Socket accept queue length (default 20).")
-    int acceptQueue = 20;
+    @Option(name = "--accept-queue", required = false, usage = "Socket accept queue length.")
+    int acceptQueue;
 
     @Option(name = "--threads", required = false, 
-        usage = "Maximum number of processing threads (default " + MIN_THREADS + ").")
-    int maxThreads = MIN_THREADS;
-
+        usage = "Maximum number of processing threads.")
+    int processingThreads = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
+    
     String appName;
     Server server;
 
@@ -87,11 +82,13 @@ public class DcsApp
         configureLogging();
         log.info("Starting DCS...");
 
-        // http://issues.carrot2.org/browse/CARROT-581
-        if (maxThreads < MIN_THREADS)
-        {
-            throw new IllegalArgumentException("Max number of threads must be greater than "
-                + MIN_THREADS);
+        // Figure out the size of the thread pool and the number of acceptors. [CARROT-1118]
+        final int acceptors = Math.min(16, Runtime.getRuntime().availableProcessors());
+        final int threads = acceptors * 2 + processingThreads; 
+
+        // The default accept queue is twice the number of processing threads.
+        if (acceptQueue == 0) {
+          acceptQueue = processingThreads * 2;
         }
 
         server = new Server();
@@ -99,7 +96,11 @@ public class DcsApp
         connector.setPort(port);
         connector.setReuseAddress(false);
         connector.setAcceptQueueSize(acceptQueue);
-        connector.setThreadPool(new QueuedThreadPool(maxThreads));
+
+        connector.setAcceptors(acceptors);
+        QueuedThreadPool qtp = new QueuedThreadPool();
+        qtp.setMaxThreads(threads);
+        connector.setThreadPool(qtp);
         connector.setSoLingerTime(0);
         server.addConnector(connector);
 
@@ -109,7 +110,17 @@ public class DcsApp
         {
             public void lifeCycleStarted(LifeCycle lc)
             {
-                log.info("DCS started on port: " + port + " [local: " + connector.getLocalPort() + "]");
+                log.debug(
+                    String.format(Locale.ROOT,
+                        "Threads: %d, accept queue: %d, tpq size: %d",
+                        processingThreads,
+                        acceptQueue,
+                        threads));
+                log.info(
+                    String.format(Locale.ROOT,
+                        "DCS started on port: %d [local: %d]",
+                        port,
+                        connector.getLocalPort()));
             }
 
             public void lifeCycleFailure(LifeCycle lc, Throwable t)

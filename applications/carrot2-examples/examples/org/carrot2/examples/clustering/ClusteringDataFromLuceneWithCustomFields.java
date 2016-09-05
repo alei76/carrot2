@@ -2,7 +2,7 @@
 /*
  * Carrot2 project.
  *
- * Copyright (C) 2002-2015, Dawid Weiss, Stanisław Osiński.
+ * Copyright (C) 2002-2016, Dawid Weiss, Stanisław Osiński.
  * All rights reserved.
  *
  * Refer to the full license file "carrot2.LICENSE"
@@ -38,7 +38,7 @@ import org.carrot2.source.lucene.SimpleFieldMapper;
 import org.carrot2.util.annotations.ThreadSafe;
 import org.carrot2.util.attribute.IObjectFactory;
 
-import com.google.common.collect.Maps;
+import org.carrot2.shaded.guava.common.collect.Maps;
 
 /**
  * This example shows how to apply custom processing to documents returned by the
@@ -162,7 +162,6 @@ public class ClusteringDataFromLuceneWithCustomFields
      * A wrapper class producing {@link StandardAnalyzer} instances.
      */
     public static final class StandardAnalyzerFactory implements IObjectFactory<Analyzer> {
-        @SuppressWarnings("deprecation")
         @Override
         public Analyzer create()
         {

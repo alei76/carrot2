@@ -2,7 +2,7 @@
 /*
  * Carrot2 project.
  *
- * Copyright (C) 2002-2015, Dawid Weiss, Stanisław Osiński.
+ * Copyright (C) 2002-2016, Dawid Weiss, Stanisław Osiński.
  * All rights reserved.
  *
  * Refer to the full license file "carrot2.LICENSE"
@@ -61,7 +61,7 @@ import org.carrot2.util.attribute.constraint.NotBlank;
 import org.carrot2.util.simplexml.SimpleXmlWrappers;
 import org.slf4j.Logger;
 
-import com.google.common.collect.Maps;
+import org.carrot2.shaded.guava.common.collect.Maps;
 
 /**
  * A {@link IDocumentSource} fetching {@link Document}s from a local Apache Lucene index.
@@ -323,7 +323,7 @@ public final class LuceneDocumentSource extends ProcessingComponentBase implemen
 
         final SearchEngineResponse response = new SearchEngineResponse();
         final IndexSearcher searcher = indexOpen(directory);
-        final TopDocs docs = searcher.search((Query) query, null, results);
+        final TopDocs docs = searcher.search((Query) query, results);
 
         response.metadata.put(SearchEngineResponse.RESULTS_TOTAL_KEY, docs.totalHits);
 
